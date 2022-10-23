@@ -1,38 +1,46 @@
-import React from "react"
-//App 父组件 Son子组件
-
-//函数式的Son
-function SonF(props){
-    //props是一个对象，里面存着通过父组件传入的所有数据
+import React, {createContext} from "react";
+/**
+ * 跨组件通信
+ * App->A->C
+ * App数据->C
+ * 1.导入createContext方法并执行，解构提供者和消费者
+ */
+const {Provider,Consumer}= createContext()
+function ComA(){
     return(
-        <div>我是函数式子组件,{props.msg}</div>
+        <>
+            <div>
+                我是子组件A
+            </div>
+            <ComC/>
+        </>
     )
 }
 
-//类组件的Son
-class SonC extends React.Component{
-    //类组件必须通过this关键词，去获取这里的props是固定的
-    render() {
-        return(
-            <>
-                <div>我是类子组件,{this.props.msg}</div>
-            </>
-        )
-    }
+function ComC(){
+    return(
+        <>
+            <div>
+                我是子组件C
+                <Consumer>
+                    {value => <span>{value}</span>}
+                </Consumer>
+            </div>
+        </>
+    )
 }
 
-
 class App extends React.Component{
-    //准备数据
+    //组装数据
     state={
-        msg:'this is msg'
+        message:'this is App'
     }
     render() {
         return(
-            <>
-                <SonF msg={this.state.msg}/>
-                <SonC msg={this.state.msg}/>
-            </>
+            <Provider value={this.state.message}>
+                <div>我是根组件App</div>
+                <ComA/>
+            </Provider>
         )
     }
 }
